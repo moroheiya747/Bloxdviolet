@@ -15,6 +15,12 @@ await mkdir("dist");
 // don't compile these files
 await copyFile("src/sw.js", "dist/sw.js");
 await copyFile("src/uv.config.js", "dist/uv.config.js");
+await copyFile("src/index.html", "dist/index.html");
+await copyFile("src/app.js", "dist/app.js");
+await copyFile(
+	"node_modules/@mercuryworkshop/bare-mux/dist/worker.js",
+	"dist/bare-mux-worker.js"
+);
 
 let builder = await build({
 	platform: "browser",

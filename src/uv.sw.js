@@ -68,12 +68,33 @@ class UVServiceWorker extends Ultraviolet.EventEmitter {
 				this.config.construct(ultraviolet, "service");
 			}
 
-			const db = await ultraviolet.cookie.db();
+			const isAllowedUrl =
+				typeof this.config.isAllowedUrl === "function"
+					? this.config.isAllowedUrl
+					: () => true;
+			const originalRewriteUrl = ultraviolet.rewriteUrl.bind(ultraviolet);
+			ultraviolet.rewriteUrl = (str, meta = ultraviolet.meta) => {
+				if (!isAllowedUrl(str, meta)) return "about:blank";
+				return originalRewriteUrl(str, meta);
+			};
 
 			ultraviolet.meta.origin = location.origin;
 			ultraviolet.meta.base = ultraviolet.meta.url = new URL(
 				ultraviolet.sourceUrl(request.url)
 			);
+
+			if (!isAllowedUrl(ultraviolet.meta.url, ultraviolet.meta)) {
+				const blockedMessage = `Blocked request to ${ultraviolet.meta.url.href}`;
+				if (["document", "iframe"].includes(request.destination)) {
+					return renderError(new Error(blockedMessage), ultraviolet.meta.url.href);
+				}
+				return new Response(blockedMessage, {
+					status: 403,
+					headers: { "content-type": "text/plain; charset=utf-8" },
+				});
+			}
+
+			const db = await ultraviolet.cookie.db();
 
 			const requestCtx = new RequestContext(
 				request,
@@ -274,6 +295,14 @@ class UVServiceWorker extends Ultraviolet.EventEmitter {
 					default:
 						break;
 				}
+			}
+
+			if (
+				["document", "iframe"].includes(request.destination) &&
+				this.config.forceIsolation !== false
+			) {
+				responseCtx.headers["cross-origin-opener-policy"] = "same-origin";
+				responseCtx.headers["cross-origin-embedder-policy"] = "require-corp";
 			}
 
 			if (requestCtx.headers.accept === "text/event-stream") {

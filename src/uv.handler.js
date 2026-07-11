@@ -88,6 +88,16 @@ function __uvHook(window) {
 		enumerable: false,
 	});
 
+	const isAllowedUrl =
+		typeof __uv$config.isAllowedUrl === "function"
+			? __uv$config.isAllowedUrl
+			: () => true;
+	const originalRewriteUrl = __uv.rewriteUrl.bind(__uv);
+	__uv.rewriteUrl = (str, meta = __uv.meta) => {
+		if (!isAllowedUrl(str, meta)) return "about:blank";
+		return originalRewriteUrl(str, meta);
+	};
+
 	__uv.meta.origin = location.origin;
 	__uv.location = client.location.emulate(
 		(href) => {

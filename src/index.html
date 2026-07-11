@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<meta
+			name="viewport"
+			content="width=device-width, initial-scale=1, viewport-fit=cover"
+		/>
+		<title>Bloxdviolet</title>
+		<meta name="theme-color" content="#0e1628" />
+		<style>
+			:root {
+				color-scheme: dark;
+				--bg: #08111f;
+				--panel: rgba(11, 18, 32, 0.82);
+				--panel-border: rgba(127, 164, 255, 0.16);
+				--text: #edf3ff;
+				--muted: #a8b6d6;
+				--accent-strong: #aee0ff;
+				--shadow: rgba(0, 0, 0, 0.34);
+			}
+
+			* {
+				box-sizing: border-box;
+			}
+
+			html,
+			body {
+				margin: 0;
+				min-height: 100%;
+				background: radial-gradient(circle at top, rgba(108, 198, 255, 0.1), transparent 28%),
+					var(--bg);
+				color: var(--text);
+				font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+					sans-serif;
+			}
+
+			body {
+				display: grid;
+				place-items: center;
+				padding: 24px;
+			}
+
+			main {
+				width: min(420px, 100%);
+				padding: 24px 22px;
+				border: 1px solid var(--panel-border);
+				border-radius: 20px;
+				background: var(--panel);
+				backdrop-filter: blur(14px);
+				box-shadow: 0 24px 80px var(--shadow);
+			}
+
+			p {
+				margin: 0;
+				color: var(--muted);
+				font-size: 0.98rem;
+				line-height: 1.5;
+			}
+
+			#status {
+				margin-top: 18px;
+				padding: 12px 14px;
+				border-radius: 14px;
+				background: rgba(255, 255, 255, 0.04);
+				color: var(--accent-strong);
+				min-height: 46px;
+				display: flex;
+				align-items: center;
+			}
+
+			@media (max-width: 560px) {
+				main {
+					padding: 24px;
+					border-radius: 18px;
+				}
+			}
+		</style>
+	</head>
+	<body>
+		<main>
+			<p>Bloxd.io launcher</p>
+			<div id="status">Preparing launcher...</div>
+		</main>
+		<script src="uv.bundle.js"></script>
+		<script src="uv.config.js"></script>
+		<script src="app.js"></script>
+	</body>
+</html>
